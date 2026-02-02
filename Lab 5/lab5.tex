@@ -1,0 +1,189 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Lab 5},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Lab 5}
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+\maketitle
+
+\begin{verbatim}
+## Loading required package: knitr
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'knitr' was built under R version 4.5.2
+\end{verbatim}
+
+\subsection{Lab 5}\label{lab-5}
+
+\subsubsection{Due Tuesday Feb4th - Recommended to complete this before
+starting the
+midterm}\label{due-tuesday-feb4th---recommended-to-complete-this-before-starting-the-midterm}
+
+This lab we will look at some data from the plastic trash piced up
+during clean-up events around the world. I took this dataset from the
+Tidy Tuesday website. You can read the documentation
+\href{https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-01-26/readme.md}{here},
+including the references and description of the different column names.
+
+I have done some pre-processing of the data for you for this lab, to
+create two more easy-to-use dataframes.
+
+First read in the countrytotals.csv data frame
+
+\begin{verbatim}
+## Warning: package 'ggplot2' was built under R version 4.5.2
+\end{verbatim}
+
+Have a look at the data frame. Then column ``total'' gives the total
+number of pieces of plastic picked up in that country in 2020. The
+columns ``num\_events'' and ``volunteers'' give the number of trash
+pick-up events and the number of volunteers in that country. We are
+going to use this to investigate where the plastic trash problem is
+worst.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  What 5 countries had the worst plastic problem as measured by the
+  number of pieces of trash picked up?
+\end{enumerate}
+
+\textbf{Answer:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Make a plot showing the distribution of volunteers across countries
+\end{enumerate}
+
+\pandocbounded{\includegraphics[keepaspectratio]{lab5_files/figure-latex/question2-1.pdf}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Notice that there is a lot of variation across countries in the number
+  of volunteers involved in trash pickup. What problem might that cause
+  for the interpretation of your answer to question 1?
+\end{enumerate}
+
+\textbf{Answer:} \#\# if one countries has a large amount of volunteers
+they may pick up more trash, they will collect a lot of trash. Another
+country that has way less volunteers makes it seems like there is a lot
+less trash to be collected 4. Add a column to the data frame creating a
+variable that should be more closely related to the presence of plastic
+pollution in the country
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  What 5 countries have the worst plastic pollution, as measured by this
+  new variable?
+\end{enumerate}
+
+\textbf{Answer:}
+
+Now we will make a plot of the variation in the types of trash and how
+it differs around the world. Read in the continenttypes.csv data frame.
+This gives the breakdown of the different types of plastic collected on
+each continet in 2020 and the total number of pick up events.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{5}
+\item
+  Add a column to this data frame with a variable that captures the
+  existence of different types of plastic trash, controlling for the
+  intensity of the pick-up effort in different continent
+\item
+  Make a plot using ggplot showing both the total amount and
+  distribution of types of plastic picked up in each continent in the
+  average pick-up event.
+\end{enumerate}
+
+Hint: Check out options in the \href{https://www.r-graph-gallery.com}{R
+graph gallery}
+
+\pandocbounded{\includegraphics[keepaspectratio]{lab5_files/figure-latex/question7-1.pdf}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{7}
+\tightlist
+\item
+  Try uploading your R markdown file and plots to your Git Hub
+  repository. Upload your Rmd and knitted PDF to Canvas
+\end{enumerate}
+
+\end{document}
