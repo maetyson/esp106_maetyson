@@ -100,3 +100,4 @@ ggplot(continent_types, aes(x=continent, y=trueplastic, fill=plastic_type))+geom
 
 8. Try uploading your R markdown file and plots to your Git Hub repository. Upload your Rmd and knitted PDF to Canvas
 
+
