@@ -1,6 +1,11 @@
 ---
 title: "Lab 5"
-output: pdf_document
+author: "Mae Tyson"
+date: "Feb 2, 2026"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, echo=FALSE}
