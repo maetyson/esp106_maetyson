@@ -49,7 +49,6 @@ hist(countrytotal$volunteers,
      ylab= "Frequency", 
      )
 
-
 ```
 
 3. Notice that there is a lot of variation across countries in the number of volunteers involved in trash pickup. What problem might that cause for the interpretation of your answer to question 1?
@@ -67,7 +66,8 @@ countrytotal$trueplastic <- countrytotal$total/countrytotal$volunteers
 5. What 5 countries have the worst plastic pollution, as measured by this new variable?
 
 ```{r question5, echo=FALSE}
-
+countrytotals_trueordered <- countrytotal[order(countrytotal$trueplastic, decreasing = TRUE),]
+##Togo, El Salvador, Japan, Kuwait, Germany
 
 ```
 
@@ -76,6 +76,7 @@ countrytotal$trueplastic <- countrytotal$total/countrytotal$volunteers
 Now we will make a plot of the variation in the types of trash and how it differs around the world. Read in the continenttypes.csv data frame. This gives the breakdown of the different types of plastic collected on each continet in 2020 and the total number of pick up events.
 
 ```{r echo=FALSE}
+continent_types <- read.csv("continenttypes.csv")
 
 
 ```
@@ -83,7 +84,8 @@ Now we will make a plot of the variation in the types of trash and how it differ
 6. Add a column to this data frame with a variable that captures the existence of different types of plastic trash, controlling for the intensity of the pick-up effort in different continent
 
 ```{r question6, echo=FALSE}
-
+##ignore plastic type, do similiar to #4
+continent_types$trueplastic <- continent_types$total/continent_types$events
 ```
 
 7. Make a plot using ggplot showing both the total amount and distribution of types of plastic picked up in each continent in the average pick-up event.
@@ -91,7 +93,9 @@ Now we will make a plot of the variation in the types of trash and how it differ
 Hint: Check out options in the [R graph gallery](https://www.r-graph-gallery.com)
 
 ```{r question7, echo=FALSE}
-
+##include plastic type,true plastic, continent
+library(ggplot2)
+ggplot(continent_types, aes(x=continent, y=trueplastic, fill=plastic_type))+geom_bar(position = "stack", stat="identity")
 ```
 
 8. Try uploading your R markdown file and plots to your Git Hub repository. Upload your Rmd and knitted PDF to Canvas
