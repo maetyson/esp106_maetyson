@@ -1,12 +1,13 @@
 ---
 title: "Midterm One"
-output: pdf_document
-editor_options: 
-  chunk_output_type: console
+output: "pdf_document"
+editor_options: "Mae Tyson"
+chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
 library(knitr)
+library(ggplot2)
 ```
 
 In this midterm we will analyze some data on the conservation status of species in North America and spending under the Endangered Species Act. 
@@ -26,12 +27,36 @@ knitr::kable(tab, caption ='Table 1. Variables in "consevationdata.csv"' )
 Read in the file `conservationdata.csv`
 
 ```{r}
+conservation_data <- read.csv("conservationdata.csv")
 ```
 
 1. What fraction of species in the dataset are listed under the Endangered Species Act? (2 points)
+```{r question 1}
+endangered_list <- table(conservation_data$listed)
+##used table function to find number of zeros in listed column
+
+total_fraction_listed <- 1617/53658
+##divided number of ones in column by total number of species 
+
+endangered_list_alt <- mean(conservation_data$listed)
+##alternatively used mean function to find fraction because listed column uses 0's and 1's so when added together, only 1's add together
+endangered_list_alt
+```
 
 
 2. Show how many (absolute and relative) species there are for each taxonomic group by making a data.frame in which the first column has the name of the taxonomic groups, the second column is the number of species in that group, and the third column is the number of species in that group as a fraction of the total number of species in the dataset.
+```{r question 2}
+##find absolute number
+counts <- table (conservation_data$taxon)
+##use data.frame find taxon groups and then bumber in each group and then fractions
+taxon_summary <- data.frame(
+  taxon_group = names(counts),
+  number_of_species = as.vector(counts),
+  fraction_of_total = as.vector(counts) / nrow(conservation_data)
+)
+taxon_summary
+
+```
 
 
 3a) One interesting question is how the conservation status varies between different taxonomic groups. Make a plot showing the relative distribution of conservation status within each taxonomic group. There should be descriptive legend (with words, not with the numeric codes) (3 points)
@@ -39,28 +64,72 @@ Read in the file `conservationdata.csv`
 You can use a "base" plotting method, or ggplot. 
 
 If you are using ggplot, stat="count" (counts up and plots the number of observations, i.e. species, within each group) and position="fill" might both be useful.
+```{rquestion 3a}
+##use ggplot and geom bar to create a distribution of taxon conservation status 
+ggplot(conservation_data, aes(x=taxon,fill = conservation_status))+geom_bar(position = "fill", stat="count")+labs(title = "Relative Distribution of Conservation Status Within Each Taxonomic Group",
+    x = "Taxonomic Group",
+    y = "Proportion",
+    fill = "Conservation Status")
+```
 
 
 3b) Based on this graph, what is something we might be concerned about in terms of analyzing the data on conservation status, particularly for fungi and invertebrates? (1 point)
 
-**Answer:** 
+**Answer:** Something to consider would be that are a much larger number and variance among invertebrates and fungi that makes it extremely difficult to track each and every single branch off. 
 
 Read in the second data file: `spendingdata.csv`
+```{r}
+spending <- read.csv("spendingdata.csv")
+```
 
 This dataset has a species ID that matches the species ID in the conservation dataset (speciesid), year, and the spending on conservation of that species (expressed in in 2015 dollars, i.e., accounting for inflation)
 
 
 4a) Make a plot showing the distribution of spending in the year 2016 (3 points)
+```{r question 4a}
+spending_2016 <- spending[spending$Year == 2016, ]
+##make a data set with all the spending from only 2026
+
+ggplot(spending_2016, aes(x = spending)) +
+  geom_histogram(bins = 30) +
+  labs(
+    title = "Distribution of Conservation Spending in 2016",
+    x = "Spending",
+    y = "Count"
+  )
+##make a ggplot histogram to show a distrubutiion of data
+```
 
 4b) Notice the (very) long right tail on spending data - we spend a lot on a very small number of species. Show the IDs of the 3 species with the most spending in 2016. (2 points)
-
+```{r question 4b}
+##use decreasing = true to find the outliers
+tops_3 <- spending_2016$speciesid[
+  order(spending_2016$spending, decreasing = TRUE)[1:3]
+]
+```
 
 5. Merge in the data from the conservation status data frame to the spending data frame, so that we have information on species names, taxonomic group, and conservation status with the spending data. (2 points); and use that to show the scientific names of the three species identified above.
+```{r}
+#use common clumn name to merge
+merged_data <- merge(
+  spending,
+  conservation_data,
+  by = "speciesid"
+)
+
+##refind the 'top 3' from new merdged data set
+top_3 <- subset(merged_data, Year == 2016)
+top_3 <- top_3[order(-top_3$spending), ][1:3, ] 
+
+##print the species name of 'top 3'
+top_3$speciesname
+
+```
 
 
 Look up these scientific names - what is the common name for these species?
 
-**Answer:** 
+**Answer:** Oncorhynchus tshawytscha is known as King Salmon, Oncorhynchus mykiss is known as Rainbow Trout, and Oncorhynchus kisutch is also known as Silver Salmn. 
 
 6. Finally, we will use a regression to look at the relationship between spending and species taxon.
 
@@ -69,15 +138,28 @@ Because the distribution of spending is very right-skewed, it would be a good id
 Remember that log(0)=infinity. That means we have to drop observations with zero spending before taking the logarithm.
 
 a) Drop the rows where spending == 0 from the data frame and then make a new column with the logarithm (log()) of spending in each year. (2 points)
+```{r question 6a}
+## use subset to remove rows with spending =0
+merged_data <- subset(merged_data, spending != 0)
+
+##creat a new row withe th elogarithm of each spending year
+merged_data$logspending <- log(merged_data$spending)
+
+```
 
 Optional: Look at the distribution of the logged spending variable and see how it looks different from the plot you made in question 4a
 
 b) Run a regression of logged spending on taxonomic group and print the summary for the regression below (3 points)
+```{r question 6b}
+mod <- lm(logspending~taxon, data = merged_data)
+sum_mod<-summary(mod)
+sum_mod$coefficients
+```
 
 c) The way to interpret these coefficients are as the fractional difference in spending between the taxonomic group (e.g. Birds, Fishes etc) and the "dropped" group, where by default the dropped group will be Amphibians. Positive numbers indicate that group has more spent on it than Amphibians and negative numbers indicate it has less spent on it. 
 
 Based on your results in b, do we see statistically significant differences in spending between different taxonomic groups? If so, which kinds of species tend to have more spent on them and which have less? (1 points)
 
-**Answer:** 
+**Answer:** Yes, there is statistical difference shown between spending among all taxons- birds and fish receive the most spending.
 
 7. Push your R markdown file to your Github repository (2 points)
