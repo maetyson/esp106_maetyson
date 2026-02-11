@@ -129,7 +129,7 @@ tab_fractbluew[2]/sum(tab_fractbluew)
 11) Find what fraction of blue whales in the dataset spend at least some time in one of these west coast MPAs. 
 
 ```{r fracMPA}
-ind_fract <- tapply(fractbluew, bluew$individual, any)
+ind_fract <- tapply(fractbluew, bluew$ind_ident, any)
 tab_ind_fract <- table(ind_fract)
 tab_ind_fract
 tab_ind_fract[2]/sum(tab_ind_fract)
