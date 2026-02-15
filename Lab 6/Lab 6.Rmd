@@ -139,27 +139,73 @@ tab_ind_fract[2]/sum(tab_ind_fract)
 12. Create a raster with counts of blue whale observations along the California coast. Use the spatial extent we used for the mpa data (question 8) and use a spatial resolution of 1/6th of a degree. First create an empty SpatRaster. Then use `rasterize`
 
 ```{r rcount}
-r <- rast(  , res=1/6)
-r <- rasterize(   , fun="count")
-r
+# Create raster
+r <- rast(croppedmpa, res = 1/6)
+r <- rasterize(bluew, r, fun = "count")
 ```
 
 13. Make a map to show the counts and the MPAs and land areas. Plot 3 on Canvas shows you the plot you are aiming for. 
 
 ```{r countmap}
+wrld_proj <- project(wrld, crs(r))
+west_land <- crop(wrld_proj, ext(r))
 
+breaks <- c(0, 50, 100, 150, 200, 250, max(values(r), na.rm = TRUE))
+cols <- hcl.colors(20, "YlGnBu", rev = TRUE)
+
+plot(r,
+     col = cols,
+     breaks = breaks,
+     main = "Blue whale observations in MPAs",
+     axes = TRUE,
+     legend = FALSE)
+
+plot(west_land,
+     add = TRUE,
+     col = "gray80",
+     border = "black")
+
+plot(croppedmpa,
+     add = TRUE,
+     border = "red",
+     lwd = 1.5)
+
+##whale count legend
+legend("topright",
+       legend = c("50", "100", "150", "200", "250"),
+       fill = cols[1:5],
+       title = "Blue whale\ncounts",
+       bty = "n",
+       cex = 0.9)
+
+legend("topright",
+       legend = "MPA",
+       col = "red",
+       lwd = 1.5,
+       bty = "n",
+       cex = 0.9)
+##had a lot of trouble creating a graph like th example given
 ```
 
 14) Using a subset of the country boundaries (to speed up computations), create a raster with the distance to the coast, using the raster with the number of observations as template.
 
 ```{r distcoast}
 coast <- crop(wrld, ext(r)+1)
-dist_coast <- ________
+dist_coast <- distance(rasterize(coast,r))
 ```
 
 15) For each blue whale observation, find the distance to the coast based on this raster (you can use `terra::extract`). Make a histogram of the distribution. 
 
 ```{r extract}
+dist_vals <- terra::extract(dist_coast, bluew)
+dist_vals <- dist_vals[, 2]
+dist_vals <- na.omit(dist_vals)
+hist(dist_vals,
+     breaks = 30,
+     col = "aliceblue",
+     border = "white",
+     main = "Distance of blue whale observations to the coast",
+     xlab = "Distance to coast (meters)")
 
 ```
 
