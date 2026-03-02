@@ -1,0 +1,10 @@
+*.nc
+*.zip
+*.tif
+.Rhistory
+*.csv
+*.html
+*.pdf
+chn_*
+*.png
+Lab7_data/
