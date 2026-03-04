@@ -2,7 +2,10 @@
 title: "Lab 8"
 author: "Mae Tyson"
 date: "3/2/2026"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -80,8 +83,8 @@ df3<- df2 %>%
 HINT: geom_errorbar() requires a ymin and ymax aesthetic mapping. Remember that, assuming normal distribution, the central 95% of the distribution is given by ymin = mean - 1.96 X sd and ymax = mean + 1.96 X sd
 ```{r}
 ggplot(df3, aes(x=pct_AfAm,y=mean)) + geom_point() + geom_errorbar(aes(ymin = mean -1.98*sd,ymax = mean + 1.96*sd)) + facet_wrap("Pollution") + labs(
-  x="Quantile of Environmental Exposure",
-  y="Quantile of African American Population")
+  x="Quantile of African American Population",
+  y="Quantile of Environmental Exposure")
                                                                  
 ```
 
@@ -92,15 +95,16 @@ HINT: You should have to make only *very very minor* changes to the code you use
 df4<- df2 %>% 
   select(c("GEOID","pct_AfAm", "pct_low_inc", "DSLPM", "CANCER", "RESP","PNPL", "OZONE", "PM25"))%>%
   pivot_longer(cols = c("DSLPM", "CANCER", "RESP", "PNPL", "OZONE", "PM25"),names_to = "Pollution", values_to = "Groups") %>%
-  group_by(Pollution,pct_AfAm,pct_low_inc)%>% 
+  group_by(Pollution, pct_AfAm, pct_low_inc)%>% 
   summarize(mean=mean(Groups),sd=sd(Groups))
 
-ggplot(df3, aes(x=pct_AfAm,y=mean)) + geom_point() + geom_errorbar(aes(ymin = mean -1.98*sd,ymax = mean + 1.96*sd)) + facet_wrap("Pollution") + labs(
-  x="Quantile of Environmental Exposure",
-  y="Quantile of African American Population")
+ggplot(df4, aes(x=pct_AfAm,y=mean)) + geom_point() + geom_errorbar(aes(ymin = mean -1.98*sd,ymax = mean + 1.96*sd)) + facet_grid(pct_low_inc ~ Pollution) + labs(
+  x="Quantile of African American Population",
+  y="Quantile of Environmental Exposure")
 ```
 
-3. What preliminary conclusions might you draw from this exploratory data analysis about the correlation between race, class and environmental exposure acrosso the US?
+3. What preliminary conclusions might you draw from this exploratory data analysis about the correlation between race, class and environmental exposure across the US?
+Answer: The quantile for cancer and PM 25 ares lightly higher in the quantile for African American population, but the low income quantile fluctuates slight. 
 
 STRETCH GOAL: Not for credit, but if you want to challenge yourself to use nesting, tidyr, broom, map etc.
 
